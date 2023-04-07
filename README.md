@@ -6,4 +6,4 @@ python main.py
 ```
 
 ## 実行結果
-![goal_differences.png](goal_differences.png)
+![goal_differences.png](all_team/goal_differences.png)

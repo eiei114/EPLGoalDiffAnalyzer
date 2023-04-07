@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
-import matplotlib.pyplot as plt
-import pykakasi
+import csv
 
 html_data ="""
 <tbody>
@@ -523,16 +522,10 @@ matches = soup.find_all("tr")
 opponents = []
 play_times = []
 
-# pykakasiの初期化
-kks = pykakasi.kakasi()
-
 for match in matches:
     opponent = match.find("td", {"class": "no-border-links hauptlink"})
     if opponent:
-        # カタカナをローマ字に変換する
-        kana_name = opponent.text.strip()
-        romaji_name = kks.convert(kana_name)[0]['hepburn']
-        opponents.append(romaji_name)
+        opponents.append(opponent.text.strip())
 
         play_time_td = match.find("td", {"class": "rechts"})
         if play_time_td:
@@ -545,10 +538,15 @@ for match in matches:
         elif "情報なし" in match.text:
             play_times.append(-2)
 
-plt.figure(figsize=(15, 5))
-plt.bar(opponents, play_times, color='blue')
-plt.xlabel("Opponents")
-plt.ylabel("Play Time (minutes)")
-plt.title("Play Time by Opponent")
-plt.savefig("play_time_by_opponent.png")
-plt.show()
+
+print(opponents, play_times)
+
+# CSVファイル出力
+with open("player_data.csv", "w", newline='', encoding='utf-8') as csvfile:
+    csv_writer = csv.writer(csvfile)
+    csv_writer.writerow(["Opponent", "Play Time"])
+
+    for opponent, play_time in zip(opponents, play_times):
+        csv_writer.writerow([opponent, play_time])
+
+print("CSVファイルに書き込みました。")
